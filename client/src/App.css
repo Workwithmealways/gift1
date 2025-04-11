@@ -1,0 +1,407 @@
+/* Global Reset */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #fde2e4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* App Container - Vertical Layout */
+#root, .app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header - Stays on Top */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f48fb1;
+  padding: 1rem;
+  color: white;
+  font-size: 0.6rem;
+  position: sticky; /* Changed from relative */
+  top: 0; /* Stick to top */
+  z-index: 1000; /* Ensure header stays above other content */
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.3);
+}
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+}
+
+.header-title {
+  margin: 0;
+  font-family: 'Pacifico', cursive;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+/* Main Content - Scrolls if Needed */
+.main-content-section {
+  flex: 1;
+  padding-top: 20px; /* Space for header */
+  }
+
+
+.suggestions-section {
+  width: 100%;
+  padding: 2rem 0r;
+  background: #fff0f5;
+  border-top: 3px solid #f48fb1;
+  overflow: hidden;
+}
+
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: calc(100% - 2rem);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.suggestions-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #d81b60;
+  margin-bottom: 2rem;
+}
+
+.gift-card {
+  padding: 1.0rem;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gift-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.gift-card:hover {
+  transform: translateY(-5px);
+}
+
+.price {
+  color: #d81b60;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.buy-link {
+  display: inline-block;
+  background-color: #f06292;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.buy-link:hover {
+  background-color: #ec407a;
+}
+
+/* Slider Section */
+.slider-section {
+  height: 300px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  background-color: #fff0f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.3);
+}
+
+.slider-image {
+  height: 100%;
+  width: auto;
+  max-width: 100vw;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 auto;
+}
+
+/* Quote Animation */
+.quote-container {
+  width: 100%;
+  text-align: center;
+  margin: 1rem 0;
+  min-height: 60px;
+  position: static;
+}
+
+.animated-quote {
+  font-size: 1.4rem;
+  color: #880e4f;
+  font-style: italic;
+  transition: opacity 0.3s ease;
+}
+
+/* Footer - Fixed at Bottom */
+.footer {
+  background-color: #f8bbd0;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #6a1b9a;
+  border-radius: 0 0 8px 8px;
+  width: 100%;
+  position: static;
+  margin-top: auto;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+}
+
+/* Toggle Button */
+.toggle-btn {
+  position: absolute;
+  transform: scale(2.5);
+  border: none;
+  color: #d81b60;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  width: auto;
+  outline: none !important;
+}
+
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Click outside area */
+.app-container {
+  overflow: visible; 
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Floating Gift Icon */
+.suggestion-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #fff0f5;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.4);
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.3s;
+}
+.suggestion-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background-color: #f06292;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.3);
+  z-index: 1000;
+}
+
+/* Tooltip arrow */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  margin-left: -5px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #f06292 transparent transparent transparent;
+}
+
+/* Logout Icon Top-Right */
+.logout-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #e91e63;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.logout-icon:hover {
+  color: #ad1457;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  background-color: #fff0f5;
+  padding: 1.5rem 1rem;
+  border-right: 2px solid #f8bbd0;
+  box-shadow: 4px 0 12px rgba(244, 143, 177, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 100;
+}
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar li {
+  padding: 0.75rem 0;
+  color: #d81b60;
+  font-weight: 600;
+  border-bottom: 1px solid #f8bbd0;
+}
+
+/* Push content right when sidebar is open */
+.app-container.shift {
+  margin-left: 200px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Modal Form Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(244, 143, 177, 0.4);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Inputs & Button */
+input[type="text"],
+button {
+  font-size: 1rem;
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  border: 1px solid #f8bbd0;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+button {
+  background-color: #f06292;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+}
+button:hover {
+  background-color: #ec407a;
+}
+
+/* Scrollbar Style */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fde2e4;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#f48fb1, #ec407a);
+  border-radius: 10px;
+}
+
+/* Loader */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #ec407a;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 1.4rem;
+  }
+  .animated-quote {
+    font-size: 1.1rem;
+  }
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+  }
+  .app-container.shift {
+    margin-left: 0;
+  }
+  .sidebar {
+    width: 160px;
+  }
+}
+
+@keyframes cardEntry {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.modal-content {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
