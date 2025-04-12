@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 // Configure CORS dynamically based on environment
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`
+    ? process.env.REACT_APP_API_URL || `http://localhost:${PORT}`
     : 'http://localhost:5173',
   credentials: true
 }));
@@ -31,9 +31,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Development fallback
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
+  // Keep existing production config
+} else {
+  // Only show message in development
   app.get('/', (req, res) => {
-    res.send('Development mode - React server should be running on port 5173');
+    res.send('Development mode - Run React separately on port 5173');
   });
 }
 
