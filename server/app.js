@@ -1,33 +1,42 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const suggestionsRoute = require('./routes/suggestions');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Configure CORS dynamically based on environment
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
+  origin: process.env.NODE_ENV === 'production'
+    ? process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`
+    : 'http://localhost:5173',
+  credentials: true
 }));
-app.use(express.json()); 
-app.use('/api', suggestionsRoute); 
+
+app.use(express.json());
+app.use('/api', suggestionsRoute);
 app.get('/api/health', (req, res) => res.status(200).send('OK'));
 
-// Serve static files from React build
+// Production configuration
 if (process.env.NODE_ENV === 'production') {
-  const path = require('path');
-  const __dirname = path.resolve();
-  
-  // Serve static files
+  // Serve static files from React build
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // Handle React routing
+  // Handle client-side routing
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
   });
 }
 
+// Development fallback
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/', (req, res) => {
+    res.send('Development mode - React server should be running on port 5173');
+  });
+}
+
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
