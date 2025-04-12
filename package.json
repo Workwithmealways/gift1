@@ -1,7 +1,14 @@
 {
+  "name": "gift-recommendation-platform",
+    "version": "1.0.0",
+    "scripts": {
+      "install-client": "cd client && npm install",
+      "install-server": "cd server && npm install",
+      "build": "cd client && npm run build",
+      "start": "node server/app.js",
+      "render-setup": "npm run install-client && npm run install-server && npm run build"
+    },
   "dependencies": {
-    "firebase": "^11.6.0",
-    "react-google-recaptcha": "^3.1.0",
     "react-router-dom": "^7.5.0"
   }
 }
