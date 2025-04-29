@@ -108,7 +108,7 @@ function App() {
   
     try {
       setShowForm(false);
-      const res = await axios.post('http://localhost:5000/api/suggestions', formData);
+      const res = await axios.post('https://gift1-1.onrender.com/api/suggestions', formData);
       
       const filledSuggestions = [...res.data];
       while (filledSuggestions.length < 5) {
@@ -138,8 +138,7 @@ function App() {
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        await axios.get('http://localhost:5000/api/health');
-      } catch (error) {
+        await axios.get('https://gift1-1.onrender.com/api/health');      } catch (error) {
         alert('Backend server is offline. Please try again later.');
       }
     };
