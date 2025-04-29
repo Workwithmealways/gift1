@@ -108,7 +108,8 @@ function App() {
   
     try {
       setShowForm(false);
-      const res = await axios.post('https://gift1-1.onrender.com/api/suggestions', formData);
+      const res = axios.post(`${import.meta.env.VITE_API_URL}/api/suggestions`, formData);
+
       
       const filledSuggestions = [...res.data];
       while (filledSuggestions.length < 5) {
