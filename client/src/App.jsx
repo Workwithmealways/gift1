@@ -156,9 +156,10 @@ function App() {
       try {
         await axios.get(`${import.meta.env.VITE_API_URL}/api/health`);
       } catch (error) {
-        alert('Backend server is offline. Please try again later.');
+        console.warn('Backend is offline. Retrying in 5 seconds...');
+        setTimeout(checkBackend, 5000); // retry once after 5s
       }
-    };
+    };    
     checkBackend();
   }, []);
 
