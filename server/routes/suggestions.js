@@ -12,20 +12,18 @@ router.post('/suggestions', async (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  const prompt = `
-Suggest exactly 5 UNIQUE and personalized gift ideas for someone named "${name}".
-They are interested in: ${interests}.
-Their personality is: ${personality}.
+  const prompt = `Suggest exactly 5 unique gift ideas for someone named ${name}.
+Their interests include: ${interests}.
+Personality traits: ${personality}.
 The gift is for: ${occasion}.
 
-Use this format exactly for each suggestion:
+Format each suggestion STRICTLY as:
+Gift: [Name of the gift]
+Image: [Detailed image description for search]
+Available at: [Website like Etsy, Flipkart, Notonthehighstreet, ThriveMarket]
+Price: [Number between 500-5500]
 
-Gift: [Short and specific name like "Handmade Wooden Journal", "Custom Star Map"]
-Available at: Etsy
-Price: [Number between 500 and 5500]
-
-Only include 5 suggestions. Do not repeat gift names. Do not include Amazon or Flipkart.
-`;
+Include all 5 suggestions with this exact format.`;
 
   try {
     const response = await axios.post(
@@ -40,7 +38,7 @@ Only include 5 suggestions. Do not repeat gift names. Do not include Amazon or F
         headers: {
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://gift1-2.onrender.com/',
+          'HTTP-Referer': 'http://localhost:5173/',
           'X-Title': 'gift-recommendation-platform',
         },
       }
@@ -52,30 +50,61 @@ Only include 5 suggestions. Do not repeat gift names. Do not include Amazon or F
       .split(/\n(?=Gift:)/)
       .map(entry => {
         const name = entry.match(/Gift:\s*(.*)/)?.[1]?.trim();
-        const price = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
-        return name && price
-          ? {
-              name,
-              site: 'Etsy',
-              price: parseInt(price),
-            }
-          : null;
+        const imagePrompt = entry.match(/Image:\s*(.*)/)?.[1]?.trim();
+        const siteMatch = entry.match(/Available at:\s*(.*)/)?.[1]?.trim();
+        const priceMatch = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
+
+        // Default values for missing data
+        const site = siteMatch || 'Etsy';
+        const price = priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500;
+        const searchQuery = `${imagePrompt || name} ${site} gift`.replace(/ /g,',');
+
+        return {
+          name,
+          site: siteMatch || 'Etsy',
+          price: priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500
+        };
       })
-      .filter(Boolean)
-      .slice(0, 5);
+      .filter(g => g.name) // Remove empty entries
+      .slice(0, 5); // Ensure exactly 5
 
-    if (suggestions.length < 5) {
-      return res.status(500).json({
-        error: 'AI returned fewer than 5 suggestions. Try rephrasing your input.',
+    // Fill remaining slots if AI returned fewer than 5
+    const fallbackGifts = [
+      "Watch",
+      "Wallet",
+      "Photo Frame",
+      "Perfume",
+      "Bluetooth Speaker",
+      "Customized Mug",
+      "Smart Keychain",
+      "Desk Organizer",
+      "Handmade Journal",
+      "Scented Candles"
+    ];
+    
+    let i = 0;
+    while (suggestions.length < 5) {
+      suggestions.push({
+        name: fallbackGifts[i % fallbackGifts.length],
+        site: 'Etsy',
+        price: Math.floor(Math.random() * 5000) + 500
       });
-    }
+      i++;
+    }    
 
-    return res.json(suggestions);
+    // Ensure no Amazon links remain
+    const cleanedSuggestions = suggestions.map(suggestion => ({
+      name: suggestion.name,
+      site: suggestion.site.replace(/amazon/gi, 'Etsy'),
+      price: suggestion.price
+    }));
+
+    return res.json(cleanedSuggestions);
   } catch (error) {
-    console.error('❌ AI Error:', error.response?.data || error.message);
-    return res.status(500).json({
+    console.error('❌ OpenRouter Error:', error.response?.data || error.message);
+    return res.status(500).json({ 
       error: 'Failed to fetch suggestions',
-      details: error.response?.data?.error?.message || error.message,
+      details: error.response?.data?.error?.message || error.message
     });
   }
 });
