@@ -130,7 +130,7 @@ function App() {
       while (filledSuggestions.length < 5) {
         filledSuggestions.push({
           name: "Custom Gift Idea",
-          site: 'Amazon',
+          site: 'Etsy',
           price: Math.floor(Math.random() * 5000) + 500
         });
       }
@@ -268,7 +268,7 @@ function App() {
                       <h3>{gift.name}</h3>
                       <p className="price">₹{gift.price}</p>
                       <a 
-                        href={`https://www.${gift.site.toLowerCase()}.com/search?q=${encodeURIComponent(gift.name)}`} 
+                        href={`https://www.etsy.com/search?q=${encodeURIComponent(gift.name)}`}  
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="buy-link"
