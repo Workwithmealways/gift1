@@ -20,10 +20,10 @@ The gift is for: ${occasion}.
 Format each suggestion STRICTLY as:
 Gift: [Name of the gift]
 Image: [Detailed image description for search]
-Available at: [Website like Etsy, Flipkart, Notonthehighstreet, ThriveMarket]
+Available at: Etsy
 Price: [Number between 500-5500]
 
-Include all 5 suggestions with this exact format.`;
+Include all 5 suggestions with this exact format. Use only Etsy. Do not suggest Amazon, Flipkart, or any other site.`;
 
   try {
     const response = await axios.post(
@@ -38,7 +38,7 @@ Include all 5 suggestions with this exact format.`;
         headers: {
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'http://localhost:5173/',
+          'HTTP-Referer': 'https://gift1-2.onrender.com/',
           'X-Title': 'gift-recommendation-platform',
         },
       }
@@ -51,40 +51,28 @@ Include all 5 suggestions with this exact format.`;
       .map(entry => {
         const name = entry.match(/Gift:\s*(.*)/)?.[1]?.trim();
         const imagePrompt = entry.match(/Image:\s*(.*)/)?.[1]?.trim();
-        const siteMatch = entry.match(/Available at:\s*(.*)/)?.[1]?.trim();
         const priceMatch = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
 
-        // Default values for missing data
-        const site = siteMatch || 'Etsy';
         const price = priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500;
-        const searchQuery = `${imagePrompt || name} ${site} gift`.replace(/ /g,',');
 
         return {
           name,
-          site: siteMatch || 'Etsy',
-          price: priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500
+          site: 'Etsy', // force to Etsy
+          price
         };
       })
-      .filter(g => g.name) // Remove empty entries
-      .slice(0, 5); // Ensure exactly 5
+      .filter(g => g.name)
+      .slice(0, 5);
 
-    // Fill remaining slots if AI returned fewer than 5
     while (suggestions.length < 5) {
       suggestions.push({
-        name: "Personalized Gift Box",
+        name: "Handmade Personalized Gift",
         site: 'Etsy',
         price: Math.floor(Math.random() * 5000) + 500
       });
     }
 
-    // Ensure no Amazon links remain
-    const cleanedSuggestions = suggestions.map(suggestion => ({
-      name: suggestion.name,
-      site: suggestion.site.replace(/amazon/gi, 'Etsy'),
-      price: suggestion.price
-    }));
-
-    return res.json(cleanedSuggestions);
+    return res.json(suggestions);
   } catch (error) {
     console.error('❌ OpenRouter Error:', error.response?.data || error.message);
     return res.status(500).json({ 
