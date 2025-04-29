@@ -12,20 +12,20 @@ router.post('/suggestions', async (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  const prompt = `Suggest exactly 5 unique gift ideas for someone named ${name}.
-Their interests include: ${interests}.
-Their personality traits are: ${personality}.
+  const prompt = `
+Suggest exactly 5 UNIQUE and personalized gift ideas for someone named "${name}".
+They are interested in: ${interests}.
+Their personality is: ${personality}.
 The gift is for: ${occasion}.
 
-Each suggestion must follow **this exact format**:
+Use this format exactly for each suggestion:
 
-Gift: [Short, specific gift name like "Handmade Wooden Watch", "Customized Star Map"]
-Image: [Short description to visualize the product]
+Gift: [Short and specific name like "Handmade Wooden Journal", "Custom Star Map"]
 Available at: Etsy
-Price: [Number between 500-5500]
+Price: [Number between 500 and 5500]
 
-Do not suggest Amazon, Flipkart, or any other site.
-Ensure all 5 gift names are different and Etsy-appropriate.`;
+Only include 5 suggestions. Do not repeat gift names. Do not include Amazon or Flipkart.
+`;
 
   try {
     const response = await axios.post(
@@ -52,28 +52,30 @@ Ensure all 5 gift names are different and Etsy-appropriate.`;
       .split(/\n(?=Gift:)/)
       .map(entry => {
         const name = entry.match(/Gift:\s*(.*)/)?.[1]?.trim();
-        const priceMatch = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
-        const price = priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500;
-
-        return {
-          name,
-          site: 'Etsy',
-          price
-        };
+        const price = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
+        return name && price
+          ? {
+              name,
+              site: 'Etsy',
+              price: parseInt(price),
+            }
+          : null;
       })
-      .filter(g => g.name)
+      .filter(Boolean)
       .slice(0, 5);
 
     if (suggestions.length < 5) {
-      return res.status(500).json({ error: 'AI returned fewer than 5 valid suggestions. Please try again.' });
+      return res.status(500).json({
+        error: 'AI returned fewer than 5 suggestions. Try rephrasing your input.',
+      });
     }
 
     return res.json(suggestions);
   } catch (error) {
-    console.error('❌ OpenRouter Error:', error.response?.data || error.message);
+    console.error('❌ AI Error:', error.response?.data || error.message);
     return res.status(500).json({
       error: 'Failed to fetch suggestions',
-      details: error.response?.data?.error?.message || error.message
+      details: error.response?.data?.error?.message || error.message,
     });
   }
 });
