@@ -5,14 +5,15 @@ export const loginWithGoogle = async () => {
   return await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin,
-      queryParams: { 
+      redirectTo: import.meta.env.VITE_REDIRECT_URL,
+      queryParams: {
         access_type: 'offline',
         prompt: 'consent'
       }
     }
   });
 };
+
 
 export const loginWithMicrosoft = async () => {
   return await supabase.auth.signInWithOAuth({

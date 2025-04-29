@@ -159,7 +159,8 @@ function App() {
         console.warn('Backend is offline. Retrying in 5 seconds...');
         setTimeout(checkBackend, 5000); // retry once after 5s
       }
-    };    
+    };
+    
     checkBackend();
   }, []);
 
