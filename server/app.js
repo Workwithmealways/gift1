@@ -8,10 +8,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Configure CORS dynamically based on environment
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://aesthetic-licorice-6f6696.netlify.app'
+];
+
+// Configure CORS
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.REACT_APP_API_URL || `http://localhost:${PORT}`
-    : 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true
 }));
 
