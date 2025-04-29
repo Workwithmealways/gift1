@@ -14,16 +14,18 @@ router.post('/suggestions', async (req, res) => {
 
   const prompt = `Suggest exactly 5 unique gift ideas for someone named ${name}.
 Their interests include: ${interests}.
-Personality traits: ${personality}.
+Their personality traits are: ${personality}.
 The gift is for: ${occasion}.
 
-Format each suggestion STRICTLY as:
-Gift: [Name of the gift]
-Image: [Detailed image description for search]
+Each suggestion must follow **this exact format**:
+
+Gift: [Short, specific gift name like "Handmade Wooden Watch", "Customized Star Map"]
+Image: [Short description to visualize the product]
 Available at: Etsy
 Price: [Number between 500-5500]
 
-Include all 5 suggestions with this exact format. Use only Etsy. Do not suggest Amazon, Flipkart, or any other site.`;
+Do not suggest Amazon, Flipkart, or any other site.
+Ensure all 5 gift names are different and Etsy-appropriate.`;
 
   try {
     const response = await axios.post(
@@ -50,32 +52,26 @@ Include all 5 suggestions with this exact format. Use only Etsy. Do not suggest 
       .split(/\n(?=Gift:)/)
       .map(entry => {
         const name = entry.match(/Gift:\s*(.*)/)?.[1]?.trim();
-        const imagePrompt = entry.match(/Image:\s*(.*)/)?.[1]?.trim();
         const priceMatch = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
-
         const price = priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500;
 
         return {
           name,
-          site: 'Etsy', // force to Etsy
+          site: 'Etsy',
           price
         };
       })
       .filter(g => g.name)
       .slice(0, 5);
 
-    while (suggestions.length < 5) {
-      suggestions.push({
-        name: "Handmade Personalized Gift",
-        site: 'Etsy',
-        price: Math.floor(Math.random() * 5000) + 500
-      });
+    if (suggestions.length < 5) {
+      return res.status(500).json({ error: 'AI returned fewer than 5 valid suggestions. Please try again.' });
     }
 
     return res.json(suggestions);
   } catch (error) {
     console.error('❌ OpenRouter Error:', error.response?.data || error.message);
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: 'Failed to fetch suggestions',
       details: error.response?.data?.error?.message || error.message
     });

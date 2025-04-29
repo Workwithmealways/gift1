@@ -127,12 +127,8 @@ function App() {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/suggestions`, formData);
 
       const filledSuggestions = [...res.data];
-      while (filledSuggestions.length < 5) {
-        filledSuggestions.push({
-          name: "Custom Gift Idea",
-          site: 'Etsy',
-          price: Math.floor(Math.random() * 5000) + 500
-        });
+      if (filledSuggestions.length < 5) {
+        alert('We could not generate 5 personalized gift ideas. Try refining your inputs for better results.');
       }
 
       setSuggestions(filledSuggestions.slice(0, 5));
