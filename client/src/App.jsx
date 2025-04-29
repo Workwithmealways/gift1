@@ -37,6 +37,20 @@ function App() {
   const suggestionsRef = useRef(null);
   const navigate = useNavigate();
 
+  // ✅ Fix: Handle Supabase OAuth redirect
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.includes('access_token') || hash.includes('error_description')) {
+      setTimeout(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          window.history.replaceState(null, '', '/#/'); // Clean the hash
+          navigate('/');
+        }
+      }, 100);
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsGuest(!session?.user);
@@ -99,18 +113,17 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const daily = getDailyCount();
-    
+
     if (isGuest && daily.count >= 5) {
       alert('Please log in to get more suggestions.');
       navigate('/login');
       return;
     }
-  
+
     try {
       setShowForm(false);
-      const res = axios.post(`${import.meta.env.VITE_API_URL}/api/suggestions`, formData);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/suggestions`, formData);
 
-      
       const filledSuggestions = [...res.data];
       while (filledSuggestions.length < 5) {
         filledSuggestions.push({
@@ -119,9 +132,9 @@ function App() {
           price: Math.floor(Math.random() * 5000) + 500
         });
       }
-  
+
       setSuggestions(filledSuggestions.slice(0, 5));
-  
+
       if (isGuest) {
         localStorage.setItem('guestSuggestions', JSON.stringify({
           date: daily.date,
@@ -139,7 +152,8 @@ function App() {
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        await axios.get('https://gift1-1.onrender.com/api/health');      } catch (error) {
+        await axios.get(`${import.meta.env.VITE_API_URL}/api/health`);
+      } catch (error) {
         alert('Backend server is offline. Please try again later.');
       }
     };
@@ -221,7 +235,7 @@ function App() {
                         </div>
                       ))}
                       <div className="flex justify-between mt-6">
-                      <button 
+                        <button 
                           type="submit" 
                           className="bg-pink-500 text-black px-4 py-2 rounded hover:bg-pink-600"
                         >
@@ -234,7 +248,6 @@ function App() {
                         >
                           Cancel
                         </button>
-                        
                       </div>
                     </form>
                   </div>
@@ -248,17 +261,17 @@ function App() {
                 <div className="suggestions-grid">
                   {suggestions.map((gift, index) => (
                     <div key={`${gift.name}-${index}`} className="gift-card">
-                    <h3>{gift.name}</h3>
-                    <p className="price">₹{gift.price}</p>
-                    <a 
-                      href={`https://www.${gift.site.toLowerCase()}.com/search?q=${encodeURIComponent(gift.name)}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="buy-link"
-                    >
-                      Buy on {gift.site}
-                    </a>
-                  </div>
+                      <h3>{gift.name}</h3>
+                      <p className="price">₹{gift.price}</p>
+                      <a 
+                        href={`https://www.${gift.site.toLowerCase()}.com/search?q=${encodeURIComponent(gift.name)}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="buy-link"
+                      >
+                        Buy on {gift.site}
+                      </a>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -269,8 +282,7 @@ function App() {
             </footer>
           </div>
         </ProtectedRoute>
-      }
-      />
+      } />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
