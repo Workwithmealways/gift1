@@ -127,12 +127,27 @@ function App() {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/suggestions`, formData);
 
       const filledSuggestions = [...res.data];
-      while (filledSuggestions.length < 5) {
-        filledSuggestions.push({
-          name: "Custom Gift Idea",
+      const fallbackGifts = [
+        "Watch",
+        "Wallet",
+        "Photo Frame",
+        "Perfume",
+        "Bluetooth Speaker",
+        "Customized Mug",
+        "Smart Keychain",
+        "Desk Organizer",
+        "Handmade Journal",
+        "Scented Candles"
+      ];
+      
+      let i = 0;
+      while (suggestions.length < 5) {
+        suggestions.push({
+          name: fallbackGifts[i % fallbackGifts.length],
           site: 'Etsy',
           price: Math.floor(Math.random() * 5000) + 500
         });
+        i++;
       }
 
       setSuggestions(filledSuggestions.slice(0, 5));
