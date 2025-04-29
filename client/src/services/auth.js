@@ -1,11 +1,12 @@
 import { supabase } from './supabaseClient';
 
-// auth.js (updated)
+const redirectTo = import.meta.env.VITE_REDIRECT_URL;
+
 export const loginWithGoogle = async () => {
   return await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: import.meta.env.VITE_REDIRECT_URL,
+      redirectTo,
       queryParams: {
         access_type: 'offline',
         prompt: 'consent'
@@ -14,12 +15,11 @@ export const loginWithGoogle = async () => {
   });
 };
 
-
 export const loginWithMicrosoft = async () => {
   return await supabase.auth.signInWithOAuth({
     provider: 'azure',
     options: {
-      redirectTo: window.location.origin,
+      redirectTo,
       scopes: 'openid email profile'
     }
   });
@@ -39,7 +39,7 @@ export const loginWithEmail = async (email, password) => {
 
 export const resetPassword = async (email) => {
   return await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/update-password'
+    redirectTo: `${redirectTo}/update-password`
   });
 };
 
