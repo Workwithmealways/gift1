@@ -10,6 +10,8 @@ import UpdatePassword from './pages/UpdatePassword';
 import { supabase } from './services/supabaseClient';
 import ProtectedRoute from './components/ProtectedRoute';
 import { quotes } from './Data/quotations';
+import.meta.env.VITE_API_URL;
+
 
 const giftImages = [
   'https://5.imimg.com/data5/SELLER/Default/2023/12/372722042/ES/OP/GC/160934096/whatsapp-image-2023-12-29-at-11-38-37-am-500x500.jpg',
