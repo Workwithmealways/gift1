@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://aesthetic-licorice-6f6696.netlify.app'
+  'https://aesthetic-licorice-6f6696.netlify.app',
+  'https://gift1-2.onrender.com'
 ];
 
 app.use(cors({
